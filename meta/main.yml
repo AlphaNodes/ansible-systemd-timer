@@ -20,7 +20,6 @@ galaxy_info:
         - buster
         - bullseye
   galaxy_tags:
-    - systemd_timers
     - systemd
     - timers
     - configuration
