@@ -1,0 +1,67 @@
+---
+
+- name: Set timer_raw variables - {{ timer_raw.key }}
+  set_fact:
+    timer: "{{ timer_raw.value }}"
+    timer_name: "{{ systemd_timer_prefix }}{{ timer_raw.key | replace('_', '-') }}"
+
+- name: Install timer
+  block:
+    - name: Failing when exec_start is undefined - {{ timer_name }}
+      fail:
+        msg: Varible exec_start is not defined
+      when: timer.exec_start is undefined
+
+    - name: Uploading service file - {{ timer_name }}
+      template:
+        src: service.j2
+        dest: /etc/systemd/system/{{ timer_name }}.service
+        owner: root
+        group: root
+        mode: 0644
+      notify: reload systemd
+
+    - name: Uploading timer file - {{ timer_name }}
+      template:
+        src: timer.j2
+        dest: /etc/systemd/system/{{ timer_name }}.timer
+        owner: root
+        group: root
+        mode: 0644
+      notify: reload systemd
+
+    - name: Enabling timers - {{ timer_name }}
+      systemd:
+        name: "{{ timer_name }}.timer"
+        state: started
+        enabled: true
+        masked: false
+        daemon_reload: true
+
+  when: timer.state is undefined or timer.state == 'present'
+
+- name: Remove timer
+  block:
+    - name: Check if systemd timer file exists - {{ timer_name }}
+      stat:
+        path: /etc/systemd/system/{{ timer_name }}.timer
+      register: systemd_timer_file
+
+    - name: Disabling timers - {{ timer_name }}
+      systemd:
+        name: "{{ timer_name }}.timer"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      when: systemd_timer_file.stat.exists
+
+    - name: Remove systemd timer files - {{ timer_name }}
+      file:
+        path: /etc/systemd/system/{{ item }}
+        state: absent
+      loop:
+        - "{{ timer_name }}.service"
+        - "{{ timer_name }}.timer"
+      notify: reload systemd
+
+  when: timer.state is defined and timer.state == 'absent'

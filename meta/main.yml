@@ -1,0 +1,21 @@
+---
+
+dependencies: []
+
+galaxy_info:
+  role_name: systemd_timer
+  namespace: alphanodes
+  description: Setup systemd timer
+  author: alexandermeindl
+  company: AlphaNodes GmbH
+  license: GPL Version 3
+  min_ansible_version: '2.9'
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
