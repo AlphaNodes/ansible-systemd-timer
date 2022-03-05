@@ -38,3 +38,6 @@ ExecStart={{ timer.exec_start }}
 {% if timer.exec_start_post is defined %}
 ExecStartPost={{ timer.exec_start_post }}
 {% endif %}
+{% if timer.syslog_identifier is defined %}
+SyslogIdentifier={{ timer.syslog_identifier }}
+{% endif %}

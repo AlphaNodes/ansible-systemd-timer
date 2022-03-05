@@ -26,6 +26,9 @@ ansible-galaxy install alphanodes.systemd_timer
             exec_start: /usr/bin/install -g www-data -o www-data -d /run/my_cachezone
             on_boot_sec: 5s
             before_service: nginx.service
+            env:
+              RAILS_ENV: production
+              YOUR_VAR: 1
       roles:
         - alphanodes.systemd_timer
 ```
