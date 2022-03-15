@@ -35,6 +35,8 @@ AccuracySec={{ timer.accuracy_sec }}
 RandomizedDelaySec={{ timer.randomized_delay_sec }}
 {% endif %}
 {% if timer.fixed_random_delay is defined %}
+# Support with systemd 247 (ubuntu 20.04 uses older version)
+# older versions ignore this setting
 FixedRandomDelay={{ 'yes' if timer.fixed_random_delay | bool else 'no' }}
 {% endif %}
 
